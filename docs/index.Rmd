@@ -1,0 +1,49 @@
+---
+title: "Theint Thandar Bol_Final Project Homepage"
+author: "Theint Thandar Bol"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Welcome to Theint Thandar Bol_Final Project Homepage!**
+
+All of my works for final project can be seen in the following two links!
+
+## [Final Project: R Reference Guide](final_part-1_R_reference.html)
+
+In the R Reference Guide, I created a set of example for the project to cover all of the given topics as much as I can. It contains:
+
+ * Loading Data and Packages
+ * Data Structures
+ * Subsetting
+ * Numerical Data Exploration
+ * Graphical Data Exploration
+ * Distribution Functions
+
+## [Final Project: Data Analysis](final_part-2_data_analysis.html)
+
+In the Data Analysis project, all of the answers can be seen according to following question topics. 
+
+  * Data Exploration
+  * Model Building
+    + Model Diagnostics
+    + Model Assumptions
+    + Model Interpretation
+  * Simple Linear Regression
+  * Body Mass: Coefficient Tables
+  * ANOVA Tables
+  * Model Comparison
+
+
+
+
+
+
+
