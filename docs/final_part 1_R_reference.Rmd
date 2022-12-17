@@ -1,0 +1,426 @@
+---
+title: "Final Part 1: R Reference Guide"
+author: "Theint Thandar Bol"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Reference Guide{.tabset .tabset-pills}
+
+Learning 'R' may seems difficult at first. However, it can expand your ability to analyze and visualize the dataset as you learn it. To remember functions and concepts, a great way to retain the skills that will be important for you going forward is to create a set of examples on your own.
+
+Therefore, this is a set of R examples for my personal reference beyond this course.
+
+## **Loading Data and Packages**
+In R, there are many additional packages created by expert users so that we can easily install them.
+In the R Reference guide, we will see the example of installing packages.
+
+1. Install the here () package.
+2. Download and read data files into R.
+3. Perform an exploratory data analysis.
+
+
+To install the here () package, we can write
+```
+install.packages("here")
+```
+to read data files into R, the code will be:
+```
+here()
+read.csv()
+```
+For examples: to load the **2021 ginkgo leaf data** which is stored in the _/Volumes/Data D/git/final_project/ginkgo_data_2021.csv_, the following code should be used.
+```
+require(here)
+read.csv(here("data", "ginkgo_data_2021.csv"))
+```
+Once we install the package, we need to load it so that it becomes available to use, we can simply use `require()` and `library()`
+```
+require(palmerpenguins)
+library(palmerpenguins)
+```
+## **Data Structures**
+
+In R programming, we need to use various variables to store various information which means that when we create a variable, we reserve some space in memory. Based on the data type of a variable, the operating system allocates memory and decides what can be stored in the reserved memory. Generally, we will see six types of basic data structures which include 1) vector, 2) list, 3) Matrix, 4) Data frame, 5) Array and 6) Factor. 
+
+### Required Functions for example:
+* `c()`
+* `length()`
+* `matrix()`
+* `data.frame()`
+
+### **c() function**
+The `c()` function combines multiple values or concatenates its arguments into a vector (a 1-dimensional data structure consisting of 1 or more elements) or list.
+* All of the elements must be the same type which means that we cannot combine 'character and numeric types in the same call to `c()` function.
+
+### `c()` examples:
+
+```{r}
+# Create a vector of numbers:
+
+num_vec  = c(2, 4, 8, 10, 23)
+
+# Create a vector of characters:
+
+char_vec = c("Bo", "happy", "to learn R")
+
+# Typing the name of the vector into the console prints the contents
+
+num_vec
+
+#The print() function accomplishes the same task:
+
+print(char_vec)
+```
+
+### **Length description: `length()`**
+
+With the length() function, we can get or set the length of vectors and factors. Getting the length is useful for counting the number of entries in a column of a data frame, which might help us figure out the number of samples in our data.
+
+_Example of counting the number of entries in a column of a dataframe_
+```{r}
+require(here)
+ginkgo <- read.csv(here("data", "ginkgo_data_2021.csv"))
+length(ginkgo$max_width)
+```
+The `length()` function determines how many elements are in a vector.
+
+The length function will give an output of the number of values in our example vector.
+```{r}
+length(num_vec)
+```
+
+### **matrix()**
+In R, matrices are rectangular two-dimensional arrangements of elements. They contain elements with similar atomic types. A Matrix is created using the `matrix()` function.
+
+**Syntax**
+The basic syntax for creating a matrix in R is −
+```
+matrix(data, nrow, ncol, byrow, dimnames)
+```
+Following is the description of the parameters used −
+
+- **data** is the input vector which becomes the data elements of the matrix.
+
+- **nrow** is the number of rows to be created.
+
+- **ncol** is the number of columns to be created.
+
+- **byrow** is a logical clue. If TRUE then the input vector elements are arranged by row.
+
+- **dimname** is the names assigned to the rows and columns.
+
+_to use the `num_vec` vector from the previous example to create a matrix that has five rows and four columns_ 
+```{r}
+test_matrix <- matrix(num_vec, nrow= 5, ncol= 3)
+test_matrix
+```
+
+_to create a matrix with the `num_vec` vector that is filled row-wise rather than_
+```{r}
+test_matrix_2 <- matrix(num_vec, byrow= TRUE, nrow= 1)
+test_matrix_2
+```
+
+### **data.frame()**
+A data frame is a table or a two-dimensional array-like structure where a row contains one set of values from each column and a column contains one set of values from all the columns.The `data.frame()` function is used to construct a **data frame**. A **data frame** contains a combination of different vectors, matrices, and arguments.
+
+ * Numerical, logical, and character data can all be stored in a data frame.
+ * The data frame columns contain one value from each variable, while the rows contain one set of values from each column.
+ * A column can have the same data type for all elements, but different columns can have different data types.
+
+#### For example:
+#### Using row.names with data.frame():
+```{r}
+num_vec  = c(1, 4, 8, 9, 13)
+test_matrix <- matrix(num_vec, nrow= 5, ncol= 3)
+data.frame(test_matrix, row.names = c("a", "b", "c", "d", "e"))
+```
+
+#### Use the ginkgo data.frame to create examples of:
+* `nrow()`
+*	`ncol()`
+*	`dim()`
+
+Codes are:
+Use the ginkgo data.frame to create examples of:
+```{r}
+ncol(ginkgo)
+nrow(ginkgo)
+dim(ginkgo)
+```
+
+#### Using data.frame to join two vectors
+```{r}
+my_vec = rep(1:3, 3)
+my_bool_vec<-my_vec == 2
+data.frame(my_vec, my_bool_vec)
+```
+
+## **Subsetting**
+
+Subsetting in R is a useful indexing feature for accessing object elements. It can be used to select and filter variables and observations. We can use `[ ]` to select rows and columns from dataframe.
+
+We can look the ginkgo data for these examples:    
+
+* `$` Subset a data frame by name: select one of the columns in the ginkgo data
+
+```{r paged.print=FALSE}
+# leaf notch depth
+notch_depth = ginkgo$notch_depth
+# select first row of the ginkgo data
+ginkgo[1,]
+# select the element in row 2, column 3
+ginkgo[2,3]
+# select the 3rd column of the ginkgo data
+third_colum = ginkgo[,3]
+head(third_colum)
+```
+* `head()` Returns the first or last parts of a vector, matrix, table, data frame or function
+
+* `subset()` Use this function to retrieve all the data for **Adelie penguins** (in the species column) from the **peuguins dataset**.
+
+```{r}
+library(palmerpenguins)
+penguin_adelie <- subset(penguins, species == "Adelie")
+```
+
+## **Numerical Data Exploration**
+
+Use the ginkgo or Palmerpenguin data to create examples of:
+
+* `summary()` - It is used to produce result summaries of the results of various model fitting functions.
+*	`mean()` - It is calculated by taking the sum of the values and dividing with the number of values in a data series. The function `mean()` is used to calculate this in R.
+*	`sd()` - This function computes the standard deviation of the values in x. If `na.rm` is `TRUE` then missing values are removed before computation proceeds.
+
+For example:
+```{r}
+summary(ginkgo)
+mean(ginkgo$max_depth)
+sd(ginkgo$max_depth)
+```
+
+## **Graphical Data Exploration**
+Data exploration is a mandatory first step, regardless of whether more formal analysis follows. By combining visualization with descriptive statistics, we can identify summary summaries, structure, relationships, differences, and abnormalities.
+
+### **Scatterplot**
+The scatterplot shows a large number of points plotted in the Cartesian plane. There are two variables represented by each point. The horizontal axis is chosen for one variable while the vertical axis is chosen for another. Using the plot() function, we can create a simple scatterplot.
+
+For example, using the ginkgo data, we can create a **scatterplot** of max leaf depth (x) and max leaf width (y)
+```{r}
+plot(x = ginkgo$max_depth, y = ginkgo$max_width, 
+     xlab = "Maximum leaf Depth (mm)", 
+     ylab = "Maximum leaf Width (mm)", 
+     main = "Scatterplot of Dimension of Ginkgo leaves")
+```
+
+Plot using all arguments:
+```{r}
+plot(x = ginkgo$max_depth, y = ginkgo$max_width, 
+     xlab = "Maximum leaf Depth (mm)", 
+     ylab = "Maximum leaf Width (mm)", 
+     main = "Scatterplot of Dimension of Ginkgo leaves", 
+     type = "p", col = "3", pch = 16, cex = 1.5, 
+     xlim = c(10, 158), 
+     ylim = c(0, 170))
+```
+
+`plot()` required arguments:
+
+*	`col =  ` In R, the color black is denoted by `col = 1` in most plotting functions, red is denoted by `col = 2` , and green is denoted by `col = 3` . So if you're plotting multiple groups of things, it's natural to plot them using colors **1, 2, and 3**
+
+*	`pch = ` The default R plot pch symbol is 1, which is an empty circle. You can change this to pch = 19 (solid circle) or to pch = 21 (filled circle). To change the color and the size of points, use the following arguments: col : color (hexadecimal color code or color name)
+
+*	`cex = ` number indicating the amount by which plotting text and symbols should be scaled relative to the default. 1=default, 1.5 is 50% larger, 0.5 is 50% smaller, etc
+
+*	`main = `used to create a title
+  * example: `main = “Title of Graph”`
+  
+*	`xlab = `used to label the x axis
+  * example: `xlab = “This is my x title”`
+  
+* `ylab = `used to label the y axis
+
+* `xlim = `used to set limits of the x axis. 
+  * example: `c(0, max(ginkgo$max_depth)+20)`
+
+* `ylim = ` used to set limits of the y axis
+
+### **Histogram**
+A histogram demonstrates the frequency of different values of a variable bucketed according to their ranges. Although, histogram is similar to bar chat, the difference between them is 'histogram' groups the values into continuous ranges. Histograms represent values as bars, where bars indicate the height of values in a range.
+
+R creates histogram using hist() function. let take a glance on our example of _penguin_flipper_lengths_ histogram
+```{r}
+hist(penguins$flipper_length_mm, 
+     xlab = "Flipper length", 
+     main = "Histogram of Penguin Flipper Length",
+     col = "steelblue",
+     breaks = 7)
+```
+
+**Required arguments**
+
+* `breaks = ` argument controls the number of bars, cells or bins of the histogram. It shows the counts, intensity/density for each bin, the midpoints of each bin, and variable names. The default of `breaks` is "Sturges".
+ 
+* `col = ` argument is a color to be used to fill the bars and the default of "NULL" is unfilled bars.
+
+* `main = ` `xlab = ` `ylab = ` argument is main title of histogram and axis labels represent 'x' and 'y' axis names. For example, in the "penguin_flipper_length histogram", `xlab = Flipper length` and `ylab = Frequency`.
+
+
+
+### **Boxplot**
+The aim of boxplot is to measure how data is well distributed in a data set. The boxplot divides the data set into three quartiles. In the plot, we can see minimum, maximum, median, first quartile and third quartiles in the data set.
+
+* In the R reference guide, we will creat boxplot with two examples using the ginkgo data:
+
+a simple boxplot of ginkgo petiole lengths
+```{r}
+boxplot(ginkgo$petiole_length, 
+        main = "Boxplot of Ginkgo Petiole Length")
+```
+
+conditional boxplot of one of the continuous variables conditioned on the `seeds_present` column
+
+```{r}
+boxplot(data = ginkgo, max_width ~ seeds_present, 
+        main = "Conditional boxplot\n Maximum leaf width by Seeds present", 
+        xlab = "Seeds Presence",
+        ylab = "Max Leaf Width",
+        col = "skyblue")
+```
+
+Create a 4-panel figure of histograms, arranged in a 2 by 2 grid. 
+* Require function -> `par()` 
+* Required arguments ->  `mfrow = c(...,...)`
+
+```{r}
+par(mfrow = c(2,2))
+
+# Scatter plot
+plot(x = ginkgo$max_depth, y = ginkgo$max_width, 
+     xlab = "Maximum leaf Depth (mm)", 
+     ylab = "Maximum leaf Width (mm)", 
+     main = "Scatterplot of Dimension of Ginkgo leaves", 
+     type = "p", col = "3", pch = 16, cex = 1.5, 
+     xlim = c(10, 158), 
+     ylim = c(0, 170))
+
+# Histogram
+hist(penguins$flipper_length_mm, 
+     xlab = "Flipper length", 
+     main = "Histogram of Penguin Flipper Length",
+     col = "steelblue",
+     breaks = 7)
+
+# Boxplot
+boxplot(ginkgo$petiole_length, main = "Boxplot of Ginkgo Petiole Length")
+
+# Conditional boxplot
+boxplot(data = ginkgo, max_width ~ seeds_present, 
+        main = "Conditional boxplot\n Maximum leaf width by Seeds present", 
+        xlab = "Seeds Presence",
+        ylab = "Max Leaf Width",
+        col = "skyblue")
+```
+
+## **Distribution Functions**
+
+R includes functions for calculating probability density (or mass), cumulative probability, and generating random numbers drawn from a wide range of distributions.
+When we want to pull numbers from a normal distribution, `dnorm`, `pnorm`, `qnorm` and `rnorm` are useful.
+
+### **dnorm()**
+
+`dnorm ()` funciton determines the probability density (or mass) of a single event based on a population with a normally distributed distribution.
+  
+For example: 
+It finds the value of y (height of the curve) for a given value of x. The mean and standard deviation of the distribution must be provided. 
+
+```{r}
+dnorm(1.5, mean = 0, sd = 1)
+```
+    
+### **pnorm()**
+
+`pnorm()` function can be used to calculate the probability of observing values on above or below a critical value when calculating a confidence interval. 
+    
+For example:
+It finds the probability of the given value OR LESS occurring. The mean and standard deviation of the distribution must be provided.
+```{r}
+pnorm(1.5, mean = 0, sd = 1)
+```
+
+### **qnorm()**
+
+`qnorm()` function computes the quantile for a given value in a normal distribution. The distribution's mean and standard deviation must be provided.
+
+For example:
+The mean and standard deviation of the distribution must be provided.
+```{r}
+qnorm(0.85, mean=70, sd=3)
+```
+
+### **dbinom()**
+
+The `dbinom()` functions generate the binomial distribution using the density, distribution, and quantile functions, as well as random number generation with the size and prob parameters. This is usually interpreted as the number of "successes" in size trials.
+
+**dbinom()**: the probability mass function and calculates the probability of an exact given value occurring in a binomial distribution. The size and probability must be provided.
+    
+    
+    Syntax: dbinom (x, size, prob)
+  
+    Parameter:
+    x: a vector of numbers
+    size: the number of trials
+    prob: the probability of success of each trial
+
+
+For example, I will calculate the probability to get the heads exactly 15 times if the coin is tossed 30 times fairly using the `dbinom()` function. Since the coin is tossed fairly the prob parameter to the function is passed to be 0.5.
+```{r}
+dbinom(x = 15, size = 30, prob = 0.5)
+```
+
+### **pbinom()**
+
+**pbinom()**: the cumulative mass function
+The `pbinom()` function can be used to determine the likelihood that a variable XX would follow a binomial distribution and have values lower than or equal to xx.
+
+    Syntax: pbinom (x, size, prob)
+  
+    Parameter:
+    x: a vector of numbers
+    size: the number of trials
+    prob: the probability of success of each trial
+
+  
+For example,again, I will calculate the probability to get a head more than 5 times if the coin is flipped fairly 50 times using the `pbinom()`function. Since the coin is tossed fairly the prob parameter to the function is passed to be 0.6. 
+```{r}
+pbinom(5, size = 50, prob = 0.6, lower.tail = FALSE)
+```
+
+
+### **qbinom()**
+
+**qbinom()**: the quantile function. Given a specific random variable q, the number of trials (size), and the likelihood that each trial will be successful, this function gives the value of the inverse cumulative density function (cdf) of the binomial distribution (prob). Additionally, we may determine the pth quantile of the binomial distribution by using this function.
+
+    Syntax: qbinom (x, size, prob)
+  
+    Parameter:
+    x: a vector of numbers
+    size: the number of trials
+    prob: the probability of success of each trial
+
+In the example, I will use the `qbinorm()` function to get the 20th quantile of a binomial distribution with 50 trials with the prob of success to 1.
+
+```{r}
+qbinom(.20, size = 50, prob = 1)
+```
+
+-----------------
+**FINISH PART 1**
+-----------------
